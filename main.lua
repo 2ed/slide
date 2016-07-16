@@ -2,8 +2,6 @@ require('gui')
 require('sound')
 require('sensor')
 
-local touches = {}
-
 padInit = function(padList)
  for i, pad in ipairs(padList) do
   pad.state = {
@@ -34,12 +32,18 @@ end
 
 p = printProducer(24,22)
 
-printTable = function (iterTable)
- for elName, elValue in pairs(iterTable) do
-    p((string.match(tostring(type(elName)),'[sn][tu]')
-	  and elName
-	  or tostring(type(elName)) ).. ': ' .. (tostring(elValue)))
- end
+printTable = function (iterTable, flag, level)
+   level = level or ''
+   for elName, elValue in pairs(iterTable) do
+      p(level .. (string.match(tostring(type(elName)),'[sn][tu]')
+	    and elName
+	    or tostring(type(elName)) ).. ': ' .. (tostring(elValue)))
+      if flag then
+	 if tostring(type(iterTable[elName])) == 'table' then
+	    printTable(iterTable[elName], r, level .. '  ')
+	 end
+      end
+   end
 end
 
 pi = function(tabl, iterFunc, ...)
@@ -62,15 +66,23 @@ function love.load()
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
-   touchRegister(touches,id,x,y,pressure)
+   touchRegister(sensor.touchTable,id,x,y,pressure)
 end
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
-   touchProcess(touches[id],x,y,dx,dy,pressure)
+   touchProcess(sensor.touchTable[id],x,y,dx,dy,pressure)
 end
 
 function love.touchreleased( id, x, y, dx, dy, pressure )
- touches[id] = null
+   touchRemove(sensor.touchTable,id)
+end
+
+function love.keypressed(key,scancode)
+   -- touchRegister(sensor.touchTable,key,100,100,0.5)
+end
+
+function love.keyreleased(key,scancode)
+   --   touchRemove(sensor.touchTable,key)
 end
 
 function love.update(dt)
@@ -80,9 +92,11 @@ end
 function love.draw()
 	p('kek', 'reset')
 	face:draw()
-	padInit(face.elements)
+	touchDraw(sensor.touchTable)
+	padInit(face.elements)	
+	
 	-- printTable(face.elements)
 	pi(face.elements, ipairs, 'freq')
-	printTable(touches)
+	printTable(sensor.touchTable,'r')
 end
 
