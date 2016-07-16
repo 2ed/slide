@@ -1,8 +1,9 @@
 
 win = {}
-win.w, win.h = 960, 540 -- love.window.getMode() -- 
-love.window.setMode(win.w, win.h)
-w, h = love.window.getMode() -- Weird trick for small resolution screens
+-- win.w, win.h = 960, 540 -- love.window.getMode() 
+win.w, win.h = love.window.getMode()
+-- love.window.setMode(win.w, win.h)
+-- w, h = love.window.getMode() -- Weird trick for small resolution screens
 
 x0, y0 = 0, 0
 face = {
@@ -57,8 +58,10 @@ face.split = function(self, parts, align, template, initPart)
 		xPlus, yPlus = 1, 0
 	end
 	
-	local width  = self.w*(1 - (self.padding.l + self.padding.r)/100)/(parts^xPlus)
-	local height = self.h*(1 - (self.padding.t + self.padding.b)/100)/(parts^yPlus)
+	local width  = self.w*
+	   (1 - (self.padding.l + self.padding.r)/100)/(parts^xPlus)
+	local height = self.h*
+	   (1 - (self.padding.t + self.padding.b)/100)/(parts^yPlus)
 	
 	for i= initPart or 1, parts do
 		self.elements[i] = self:newElement()
@@ -66,10 +69,14 @@ face.split = function(self, parts, align, template, initPart)
 		el.mode    = template.mode    or 'fill'
 		el.shape   = template.shape   or 'shape'
 		el.color   = template.color   or {40,100,100}
-		el.margin  = template.margin  or {t =  0, b =  0, l = 0, r =  0 } 
-		el.padding = template.padding or {t =  0, b =  0, l = 0, r =  0}
-		el.x = self.x + self.padding.l*self.w/100 + el.margin.l*width/100 + xPlus*(i - 1)*width 
-		el.y = self.y + self.padding.t*self.h/100 + el.margin.t*height/100 + yPlus*(i - 1)*height 
+		el.margin  = template.margin  or
+		   {t =  0, b =  0, l = 0, r =  0 } 
+		el.padding = template.padding or
+		   {t =  0, b =  0, l = 0, r =  0}
+		el.x = self.x + self.padding.l*self.w/100
+		   + el.margin.l*width/100 + xPlus*(i - 1)*width 
+		el.y = self.y + self.padding.t*self.h/100
+		   + el.margin.t*height/100 + yPlus*(i - 1)*height 
 		el.w = width  * (1 - (el.margin.l + el.margin.r)/100)
 		el.h = height * (1 - (el.margin.t + el.margin.b)/100)
 	end
