@@ -13,10 +13,10 @@ padInit = function(padList)
 end
 
 printProducer = function(font, inRow)
-   if not verbose then return end
    local step = -font*1.5
    local leftBorder = font*1.5
    return function(element, reset)
+      if not verbose then return end
       if reset then
 	 step, leftBorder = -font*1.5, font*1.5
 	 return 
