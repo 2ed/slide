@@ -41,9 +41,10 @@ touchRemove = function(touchTable,id)
 end
 
 touchDraw = function(touchTable)
-   local radius = win.h/15
+   local radius = win.h/5
    for id, t in pairs(touchTable) do
-      love.graphics.circle("fill", t.x,t.y, t.pressure*radius,20)
-      p(tostring(id))
+      love.graphics.setColor(100,255,100,150)
+      love.graphics.circle("fill", t.x, t.y, t.pressure*radius,20)
+--      p(tostring(id))
    end
 end

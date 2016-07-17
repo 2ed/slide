@@ -13,21 +13,22 @@ padInit = function(padList)
 end
 
 printProducer = function(font, inRow)
- local step = -font*1.5
- local leftBorder = font*1.5
- return function(element, reset)
-  if reset then
-   step, leftBorder = -font*1.5, font*1.5
-   return 
-  end
-  love.graphics.setNewFont(font)
-  leftBorder =  leftBorder + 
-  	font*inRow*math.floor((step + font*1.5)/
-  		(h - font*1.5))
-  step = (step + font*1.5)%(h - font*1.5)
-  love.graphics.setColor(255,255,255)
-  love.graphics.print(element, leftBorder, step)
- end
+   if not verbose then return end
+   local step = -font*1.5
+   local leftBorder = font*1.5
+   return function(element, reset)
+      if reset then
+	 step, leftBorder = -font*1.5, font*1.5
+	 return 
+      end
+      love.graphics.setNewFont(font)
+      leftBorder =  leftBorder + 
+	 font*inRow*math.floor((step + font*1.5)/
+	       (h - font*1.5))
+      step = (step + font*1.5)%(h - font*1.5)
+      love.graphics.setColor(255,255,255)
+      love.graphics.print(element, leftBorder, step)
+   end
 end
 
 p = printProducer(24,22)
@@ -78,11 +79,11 @@ function love.touchreleased( id, x, y, dx, dy, pressure )
 end
 
 function love.keypressed(key,scancode)
-   -- touchRegister(sensor.touchTable,key,100,100,0.5)
+   touchRegister(sensor.touchTable,key,100,100,0.5)
 end
 
 function love.keyreleased(key,scancode)
-   --   touchRemove(sensor.touchTable,key)
+      touchRemove(sensor.touchTable,key)
 end
 
 function love.update(dt)
