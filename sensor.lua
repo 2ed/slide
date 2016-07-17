@@ -43,7 +43,7 @@ end
 touchDraw = function(touchTable)
    local radius = win.h/15
    for id, t in pairs(touchTable) do
-      p(id)
       love.graphics.circle("fill", t.x,t.y, t.pressure*radius,20)
+      p(tostring(id))
    end
 end
