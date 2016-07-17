@@ -94,6 +94,8 @@ buildFace = function(face)
 		el:split(2,'h', 
 			  {color = {40,40,40},
 			  margin = {t = 5, b = 5, l = 2, r = 5} })
+		face.pad = el.elements[1]
+		face.btn = el.elements[2]
 		el.elements[1].margin = {t = 20, b = 20, l = 2, r = 80}
 		el.elements[1]:split(12,'h', 
 			{

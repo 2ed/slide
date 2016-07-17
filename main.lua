@@ -41,7 +41,7 @@ printTable = function (iterTable, flag, level)
 	    or tostring(type(elName)) ).. ': ' .. (tostring(elValue)))
       if flag then
 	 if tostring(type(iterTable[elName])) == 'table' then
-	    printTable(iterTable[elName], r, level .. '  ')
+	    printTable(iterTable[elName],'r', level .. '  ')
 	 end
       end
    end
@@ -67,23 +67,27 @@ function love.load()
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
-   touchRegister(sensor.touchTable,id,x,y,pressure)
+   sensor.register(sensor.touchTable,id,x,y,pressure)
 end
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
-   touchProcess(sensor.touchTable[id],x,y,dx,dy,pressure)
+   sensor.process(sensor.touchTable[id],x,y,dx,dy,pressure)
 end
 
 function love.touchreleased( id, x, y, dx, dy, pressure )
-   touchRemove(sensor.touchTable,id)
+   sensor.remove(sensor.touchTable,id)
 end
 
 function love.keypressed(key,scancode)
-   touchRegister(sensor.touchTable,key,100,100,0.5)
+   sensor.register(sensor.touchTable,
+		   key,
+		   string.byte(key)*4,
+		   string.byte(key)*4,
+		   0.5)
 end
 
 function love.keyreleased(key,scancode)
-      touchRemove(sensor.touchTable,key)
+      sensor.remove(sensor.touchTable,key)
 end
 
 function love.update(dt)
@@ -93,7 +97,7 @@ end
 function love.draw()
 	p('kek', 'reset')
 	face:draw()
-	touchDraw(sensor.touchTable)
+	sensor.draw(sensor.touchTable)
 	padInit(face.elements)	
 	
 	-- printTable(face.elements)

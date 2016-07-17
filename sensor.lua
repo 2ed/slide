@@ -1,6 +1,6 @@
 require("gui")
-
 sensor = {}
+
 local touches = {
    
 }
@@ -22,29 +22,46 @@ end
 
 setmetatable(touches,touches)
 
-touchRegister = function(touchTable,id,x,y,pressure)
-   touchTable[id] = {
-      x = x,
-      y = y,
-      pressure = pressure,
---      button = checkButton(x,y,pressure)
-   }
+sensor.register = function(touchTable,id,x,y,pressure)
+   touchTable[id] = sensor.check(x,y,pressure)
+end
+
+sensor.process = function(tch, x, y, dx, dy, id)
    
 end
 
-touchProcess = function(tch, x, y, dx, dy, id)
-   
-end
-
-touchRemove = function(touchTable,id)
+sensor.remove = function(touchTable,id)
    touchTable[id] = null
 end
 
-touchDraw = function(touchTable)
+sensor.draw = function(touchTable)
    local radius = win.h/5
    for id, t in pairs(touchTable) do
       love.graphics.setColor(100,255,100,150)
       love.graphics.circle("fill", t.x, t.y, t.pressure*radius,20)
---      p(tostring(id))
    end
+end
+
+function sensor.check(x,y,pressure)
+   local state = null
+   local t = face.elements
+   for i, el in ipairs(t) do
+      if el.y < y and y < el.y + el.h then
+	 for block = 1,2 do
+	    if el.elements[block].x < x
+	    and x < el.elements[block].x + el.elements[block].w then
+	       state = {
+		  row = i,
+		  bType = block == 1 and 'pad' or 'btn', -- 1 or 2
+		  pos = (x - el.elements[block].x)/
+		     el.elements[block].w,
+		  x = x,
+		  y = y,
+		  pressure = pressure,
+	       }
+	    end
+	 end
+      end
+   end
+   return state
 end
