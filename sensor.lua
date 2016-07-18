@@ -38,13 +38,19 @@ setmetatable(touches,touches)
 
 sensor.register = function(touchTable,id,x,y,pressure)
    local tId = sensor.check(x,y,pressure)
-   if not tId and sensor.touchTable[id] then
+   if not tId and not sensor.touchTable[id] then
+      return
+   elseif not tId and sensor.touchTable[id] then
       stopNoise(sensor.touchTable[id])
    elseif tId and not sensor.touchTable[id] then
       touchTable[id] = tId
       makeNoise(sensor.touchTable[id])
-   else
+   elseif tId.row ~= sensor.touchTable[id].row then
+      stopNoise(sensor.touchTable[id])
       touchTable[id] = tId
+      makeNoise(sensor.touchTable[id])
+   else
+      makeNoise(sensor.touchTable[id])
    end
 end
 
@@ -73,6 +79,9 @@ function sensor.check(x,y,pressure)
 	    if el.elements[block].x < x
 	       and x < el.elements[block].x + el.elements[block].w
 	    then
+	       local posX =  (x - el.elements[block].x)/
+			el.elements[block].w 
+	      
 	       state = {
 		  row = i,
 		  x = x,
@@ -81,9 +90,9 @@ function sensor.check(x,y,pressure)
 		  bType = block == 1  -- 1 or 2
 		     and 'pad'
 		     or 'btn',
-		  pos = (x - el.elements[block].x)/
-		     el.elements[block].w
-	       }
+		  pos = block == 1
+		     and (posX + 1)
+		     or math.floor(posX*5  + 1)}
 	    end
 	 end
       end

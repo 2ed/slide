@@ -11,28 +11,44 @@ sample = {
 
 sample.cfg.len = sample.cfg.sec*sample.cfg.rate
 
-Oscillator = function(freq)
+Oscillator = function(waveForm,freq)
    local phase = 0
    local pi2 = math.pi*2
-   return function()
-      phase = phase + pi2/sample.cfg.rate
-      if phase == pi2 then
-	 phase = phase - pi2
+   local osc
+   if waveForm == 'sine' then
+      osc = function()
+	 phase = phase + pi2/sample.cfg.rate
+	 if phase == pi2 then
+	    phase = phase - pi2
+	 end
+	 return math.sin(phase*freq)
       end
-      return math.sin(phase*freq)
+   else
+      local step = math.floor(sample.cfg.rate/freq)
+      osc = function()
+	 phase = phase + 1
+	 if phase == step then
+	    phase = -step
+	 end
+	 return phase/step
+      end
    end
+   return osc
 end
 
 loadSound = function(pads)
    for i, pad in ipairs(pads) do      
+--      pad.len = math.floor(2*sample.cfg.rate/pad.freq) -- short
+      pad.len = sample.cfg.rate -- short
+      local padOsc = Oscillator('saw',pad.freq)
       pad.sound = love.sound.newSoundData(
 	 sample.cfg.len,
 	 sample.cfg.rate,
 	 sample.cfg.bits,
 	 sample.cfg.channel
       )   
-      local padOsc = Oscillator(pad.freq)
-      for i = 0, sample.cfg.len - 1 do
+        --      for i = 0, sample.cfg.len - 1 do
+      for i = 0, pad.len - 1 do
 	 local smpl = padOsc() * sample.cfg.amp
 	 pad.sound:setSample(i,smpl)
       end

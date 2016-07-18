@@ -2,7 +2,7 @@ require('gui')
 require('sound')
 require('sensor')
 
--- verbose = true
+verbose = true
 
 padInit = function(padList)
  for i, pad in ipairs(padList) do
@@ -121,6 +121,7 @@ function love.draw()
 	padInit(face.elements)	
 	-- printTable(face.elements)
 	pi(face.elements, ipairs, 'freq')
+	printTable(pads,'r')
 	printTable(sensor.touchTable,'r')
 end
 
