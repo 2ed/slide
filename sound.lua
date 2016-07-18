@@ -1,7 +1,7 @@
 
 sample = {
    cfg = {
-      sec = 2,
+      sec = 1,
       rate = 44100,
       bits = 16,
       channel = 1,
@@ -10,13 +10,6 @@ sample = {
 }
 
 sample.cfg.len = sample.cfg.sec*sample.cfg.rate
-
-sample.sound = love.sound.newSoundData(
-   sample.cfg.len,
-   sample.cfg.rate,
-   sample.cfg.bits,
-   sample.cfg.channel
-)
 
 Oscillator = function(freq)
    local phase = 0
@@ -30,21 +23,31 @@ Oscillator = function(freq)
    end
 end
 
-laOsc = Oscillator(440)
-
-for i = 0, sample.cfg.len - 1 do
-   local smpl = laOsc() * sample.cfg.amp
---   print(i)
-   sample.sound:setSample(i,smpl)
+loadSound = function(pads)
+   for i, pad in ipairs(pads) do      
+      pad.sound = love.sound.newSoundData(
+	 sample.cfg.len,
+	 sample.cfg.rate,
+	 sample.cfg.bits,
+	 sample.cfg.channel
+      )   
+      local padOsc = Oscillator(pad.freq)
+      for i = 0, sample.cfg.len - 1 do
+	 local smpl = padOsc() * sample.cfg.amp
+	 pad.sound:setSample(i,smpl)
+      end
+      pad.src = love.audio.newSource(pad.sound)
+      pad.src:setLooping(true)
+   end
 end
 
-
-
-makeNoise = function(src)
-   love.audio.play(src)
---   print('done')
+makeNoise = function(id)
+   pads[id.row].src:play()
+   --  love.audio.play(src)
+   --   print('done')
 end
 
-stopNoise = function(src)
-   love.audio.stop(src)
+stopNoise = function(id)
+   pads[id.row].src:stop()
+   --   love.audio.stop(src)
 end

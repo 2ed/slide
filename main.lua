@@ -2,6 +2,8 @@ require('gui')
 require('sound')
 require('sensor')
 
+-- verbose = true
+
 padInit = function(padList)
  for i, pad in ipairs(padList) do
   pad.state = {
@@ -62,20 +64,29 @@ end
 function love.load()
    love.window.setMode(win.w, win.h)
    w, h = love.window.getMode()
-   src = love.audio.newSource(sample.sound)
+   --   src = love.audio.newSource(sample.sound)
+   --   src:setLooping(true)
    love.graphics.setBackgroundColor(80,80,80)
    buildFace(face)
+   loadSound(pads)
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
    sensor.register(sensor.touchTable,id,x,y,pressure)
+   if sensor.touchTable[id] then
+      makeNoise(sensor.touchTable[id])
+   end
 end
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
-   sensor.process(sensor.touchTable[id],x,y,dx,dy,pressure)
+   -- sensor.process(sensor.touchTable[id],x,y,dx,dy,pressure)
+    sensor.register(sensor.touchTable,id,x,y,pressure)
 end
 
 function love.touchreleased( id, x, y, dx, dy, pressure )
+   if sensor.touchTable[id] then
+      stopNoise(sensor.touchTable[id])
+   end
    sensor.remove(sensor.touchTable,id)
 end
 
@@ -93,10 +104,10 @@ function love.keypressed(key,scancode)
 end
 
 function love.keyreleased(key,scancode)
-   sensor.remove(sensor.touchTable,key)
    if key == 'z' then
       stopNoise(src)
    end
+   sensor.remove(sensor.touchTable,key)
 end
 
 function love.update(dt)

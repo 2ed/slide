@@ -1,6 +1,20 @@
 require("gui")
 sensor = {}
 
+-- Dropped Down
+pads = { 
+   -- E
+   {btn = {}, pos = 0, freq = 1318.51},
+   -- C#
+   {btn = {}, pos = 0, freq = 1108.73},
+   -- A
+   {btn = {}, pos = 0, freq = 880},
+   -- E
+   {btn = {}, pos = 0, freq = 659.25},
+   -- A
+   {btn = {}, pos = 0, freq = 440},
+}
+
 local touches = {
    
 }
@@ -23,11 +37,19 @@ end
 setmetatable(touches,touches)
 
 sensor.register = function(touchTable,id,x,y,pressure)
-   touchTable[id] = sensor.check(x,y,pressure)
+   local tId = sensor.check(x,y,pressure)
+   if not tId and sensor.touchTable[id] then
+      stopNoise(sensor.touchTable[id])
+   elseif tId and not sensor.touchTable[id] then
+      touchTable[id] = tId
+      makeNoise(sensor.touchTable[id])
+   else
+      touchTable[id] = tId
+   end
 end
 
-sensor.process = function(tch, x, y, dx, dy, id)
-   
+sensor.process = function(tch, x, y, dx, dy, pressure)
+   tch = sensor.check(x,y,pressure)
 end
 
 sensor.remove = function(touchTable,id)
@@ -59,7 +81,8 @@ function sensor.check(x,y,pressure)
 		  bType = block == 1  -- 1 or 2
 		     and 'pad'
 		     or 'btn',
-		  pos = (x - el.elements[block].x)/el.elements[block].w
+		  pos = (x - el.elements[block].x)/
+		     el.elements[block].w
 	       }
 	    end
 	 end
