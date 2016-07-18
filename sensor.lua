@@ -49,15 +49,17 @@ function sensor.check(x,y,pressure)
       if el.y < y and y < el.y + el.h then
 	 for block = 1,2 do
 	    if el.elements[block].x < x
-	    and x < el.elements[block].x + el.elements[block].w then
+	       and x < el.elements[block].x + el.elements[block].w
+	    then
 	       state = {
 		  row = i,
-		  bType = block == 1 and 'pad' or 'btn', -- 1 or 2
-		  pos = (x - el.elements[block].x)/
-		     el.elements[block].w,
 		  x = x,
 		  y = y,
 		  pressure = pressure,
+		  bType = block == 1  -- 1 or 2
+		     and 'pad'
+		     or 'btn',
+		  pos = (x - el.elements[block].x)/el.elements[block].w
 	       }
 	    end
 	 end

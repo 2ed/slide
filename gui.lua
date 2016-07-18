@@ -1,4 +1,4 @@
--- verbose = true
+verbose = true
 
 win = {}
 -- win.w, win.h = 960, 540 -- love.window.getMode() 

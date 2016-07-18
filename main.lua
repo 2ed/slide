@@ -60,10 +60,11 @@ pi = function(tabl, iterFunc, ...)
 end
 
 function love.load()
-	love.window.setMode(win.w, win.h)
-	w, h = love.window.getMode()
-	love.graphics.setBackgroundColor(80,80,80)
-	buildFace(face)
+   love.window.setMode(win.w, win.h)
+   w, h = love.window.getMode()
+   src = love.audio.newSource(sample.sound)
+   love.graphics.setBackgroundColor(80,80,80)
+   buildFace(face)
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
@@ -84,10 +85,18 @@ function love.keypressed(key,scancode)
 		   string.byte(key)*4,
 		   string.byte(key)*4,
 		   0.5)
+   if key == 'z' then
+      makeNoise(src)
+   elseif key == 'x' then
+      src:setPitch(2)
+   end
 end
 
 function love.keyreleased(key,scancode)
-      sensor.remove(sensor.touchTable,key)
+   sensor.remove(sensor.touchTable,key)
+   if key == 'z' then
+      stopNoise(src)
+   end
 end
 
 function love.update(dt)
@@ -99,7 +108,6 @@ function love.draw()
 	face:draw()
 	sensor.draw(sensor.touchTable)
 	padInit(face.elements)	
-	
 	-- printTable(face.elements)
 	pi(face.elements, ipairs, 'freq')
 	printTable(sensor.touchTable,'r')
