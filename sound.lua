@@ -40,15 +40,15 @@ loadSound = function(pads)
    for i, pad in ipairs(pads) do      
 --      pad.len = math.floor(2*sample.cfg.rate/pad.freq) -- short
       pad.len = sample.cfg.rate -- short
-      local padOsc = Oscillator('saw',pad.freq)
+      local padOsc = Oscillator('sine',pad.freq)
       pad.sound = love.sound.newSoundData(
-	 sample.cfg.len,
+	 math.floor(sample.cfg.len/pads[i].freq),
 	 sample.cfg.rate,
 	 sample.cfg.bits,
 	 sample.cfg.channel
       )   
         --      for i = 0, sample.cfg.len - 1 do
-      for i = 0, pad.len - 1 do
+      for i = 0, math.floor(pad.len/pads[i].freq) - 1 do
 	 local smpl = padOsc() * sample.cfg.amp
 	 pad.sound:setSample(i,smpl)
       end
