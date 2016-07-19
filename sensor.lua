@@ -4,53 +4,34 @@ sensor = {}
 -- Dropped Down
 pads = { 
    -- E
-   {btn = {}, pos = 0, freq = 1318.51},
+   {btn = {}, str = {}, freq = 1318.51},
    -- C#
-   {btn = {}, pos = 0, freq = 1108.73},
+   {btn = {}, str = {}, freq = 1108.73},
    -- A
-   {btn = {}, pos = 0, freq = 880},
+   {btn = {}, str = {}, freq = 880},
    -- E
-   {btn = {}, pos = 0, freq = 659.25},
+   {btn = {}, str = {}, freq = 659.25},
    -- A
-   {btn = {}, pos = 0, freq = 440},
+   {btn = {}, str = {}, freq = 440},
 }
 
-local touches = {
-   
-}
-
-sensor.touchTable = touches
-
-
---[[
-touches.__index = function(t,id)
-   return t
-end
---]]
-
---[[
-touches.__newindex = function(t,i,v)
-   rawset(t,i,v)
-end
---]]
-
-setmetatable(touches,touches)
+sensor.touches = {}
 
 sensor.register = function(touchTable,id,x,y,pressure)
    local tId = sensor.check(x,y,pressure)
-   if not tId and not sensor.touchTable[id] then
+   if not tId and not sensor.touches[id] then
       return
-   elseif not tId and sensor.touchTable[id] then
-      stopNoise(sensor.touchTable[id])
-   elseif tId and not sensor.touchTable[id] then
+   elseif not tId and sensor.touches[id] then
+      stopNoise(sensor.touches[id])
+   elseif tId and not sensor.touches[id] then
       touchTable[id] = tId
-      makeNoise(sensor.touchTable[id])
-   elseif tId.row ~= sensor.touchTable[id].row then
-      stopNoise(sensor.touchTable[id])
+      makeNoise(sensor.touches[id])
+   elseif tId.row ~= sensor.touches[id].row then
+      stopNoise(sensor.touches[id])
       touchTable[id] = tId
-      makeNoise(sensor.touchTable[id])
+      makeNoise(sensor.touches[id])
    else
-      makeNoise(sensor.touchTable[id])
+      makeNoise(sensor.touches[id])
    end
 end
 

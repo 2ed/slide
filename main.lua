@@ -72,42 +72,45 @@ function love.load()
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
-   sensor.register(sensor.touchTable,id,x,y,pressure)
-   if sensor.touchTable[id] then
-      makeNoise(sensor.touchTable[id])
+   sensor.register(sensor.touches,id,x,y,pressure)
+   if sensor.touches[id] then
+      makeNoise(sensor.touches[id])
    end
 end
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
-   -- sensor.process(sensor.touchTable[id],x,y,dx,dy,pressure)
-    sensor.register(sensor.touchTable,id,x,y,pressure)
+   -- sensor.process(sensor.touches[id],x,y,dx,dy,pressure)
+    sensor.register(sensor.touches,id,x,y,pressure)
 end
 
 function love.touchreleased( id, x, y, dx, dy, pressure )
-   if sensor.touchTable[id] then
-      stopNoise(sensor.touchTable[id])
+   if sensor.touches[id] then
+      stopNoise(sensor.touches[id])
    end
-   sensor.remove(sensor.touchTable,id)
+   sensor.remove(sensor.touches,id)
 end
 
 function love.keypressed(key,scancode)
-   sensor.register(sensor.touchTable,
+   sensor.register(sensor.touches,
 		   key,
 		   string.byte(key)*4,
 		   string.byte(key)*4,
 		   0.5)
    if key == 'z' then
-      makeNoise(src)
+     -- makeNoise(touchTable, id)
    elseif key == 'x' then
-      src:setPitch(2)
+      -- src:setPitch(2)
    end
 end
 
 function love.keyreleased(key,scancode)
    if key == 'z' then
-      stopNoise(src)
+      --      stopNoise(sensor.touches[id])
    end
-   sensor.remove(sensor.touchTable,key)
+   if sensor.touches[key] then
+      stopNoise(sensor.touches[key])
+   end
+   sensor.remove(sensor.touches,key)
 end
 
 function love.update(dt)
@@ -117,11 +120,11 @@ end
 function love.draw()
 	p('kek', 'reset')
 	face:draw()
-	sensor.draw(sensor.touchTable)
+	sensor.draw(sensor.touches)
 	padInit(face.elements)	
 	-- printTable(face.elements)
 	pi(face.elements, ipairs, 'freq')
 	printTable(pads,'r')
-	printTable(sensor.touchTable,'r')
+	printTable(sensor.touches,'r')
 end
 
