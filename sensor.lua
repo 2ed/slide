@@ -15,10 +15,34 @@ pads = {
    {btn = {}, str = {}, freq = 440},
 }
 
+padInit = function(padList)
+ for i, pad in ipairs(padList) do
+  pad.state = {
+  	freq = 440*2^(3-i),
+  	str = {{pos = 0, id = 'top'}},
+  	btn = {},
+  }
+ end
+end
+
 sensor.touches = {}
 
+--[[
+sensor.link = function(pad,face)
+   for i, el in ipairs(face) do
+      setmetatable(pad[i],face[i])
+
+      pad[i].__index = face[i]
+      pad[i].__newindex = function(t,i,v)
+	 rawset(t,i,v)
+      end
+   end
+end
+--]]
+
 sensor.register = function(touchTable,id,x,y,pressure)
-   local tId = sensor.check(x,y,pressure)
+--   local row, block, pos = sensor.check(x,y,pressure)
+  local tId = sensor.check(x,y,pressure) 
    if not tId and not sensor.touches[id] then
       return
    elseif not tId and sensor.touches[id] then
@@ -36,7 +60,7 @@ sensor.register = function(touchTable,id,x,y,pressure)
 end
 
 sensor.process = function(tch, x, y, dx, dy, pressure)
-   tch = sensor.check(x,y,pressure)
+  -- tch = sensor.check(x,y,pressure)
 end
 
 sensor.remove = function(touchTable,id)
@@ -54,29 +78,31 @@ end
 function sensor.check(x,y,pressure)
    local state = null
    local t = face.elements
+   local   posX = null
    for i, el in ipairs(t) do
       if el.y < y and y < el.y + el.h then
-	 for block = 1,2 do
-	    if el.elements[block].x < x
-	       and x < el.elements[block].x + el.elements[block].w
+	 for j = 1,2 do
+	    local block = el.elements[j]
+	    if block.x < x
+	       and x < block.x + block.w
 	    then
-	       local posX =  (x - el.elements[block].x)/
-			el.elements[block].w 
-	      
+	       posX =  (x - block.x)/block.w 
+	    
 	       state = {
 		  row = i,
 		  x = x,
 		  y = y,
 		  pressure = pressure,
-		  bType = block == 1  -- 1 or 2
+		  bType = j == 1  -- 1 or 2
 		     and 'pad'
 		     or 'btn',
-		  pos = block == 1
+		  pos = j == 1
 		     and (posX + 1)
 		     or math.floor(posX*5  + 1)}
 	    end
 	 end
       end
    end
+   -- return i, j, posX
    return state
 end

@@ -40,7 +40,7 @@ loadSound = function(pads)
    for i, pad in ipairs(pads) do      
 --      pad.len = math.floor(2*sample.cfg.rate/pad.freq) -- short
       pad.len = sample.cfg.rate -- short
-      local padOsc = Oscillator('sine',pad.freq)
+      local padOsc = Oscillator('saw',pad.freq)
       pad.sound = love.sound.newSoundData(
 	 math.floor(sample.cfg.len/pads[i].freq),
 	 sample.cfg.rate,
@@ -66,4 +66,8 @@ end
 stopNoise = function(id)
    pads[id.row].src:stop()
    --   love.audio.stop(src)
+end
+
+setFreq = function(referenceFreq, cents)
+   return referenceFreq*2^(cents/1200)
 end

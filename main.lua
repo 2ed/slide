@@ -4,27 +4,17 @@ require('sensor')
 
 verbose = true
 
-padInit = function(padList)
- for i, pad in ipairs(padList) do
-  pad.state = {
-  	freq = 440*2^(3-i),
-  	str = {{pos = 0, id = 'top'}},
-  	btn = {},
-  }
- end
-end
-
 printProducer = function(font, inRow)
    local step = -font*1.5
    local leftBorder = font*1.5
-   return function(element, reset)
+   love.graphics.setNewFont(font)
+  return function(element, reset)
       if not verbose then return end
       if reset then
 	 step, leftBorder = -font*1.5, font*1.5
 	 return 
       end
-      love.graphics.setNewFont(font)
-      leftBorder =  leftBorder + 
+       leftBorder =  leftBorder + 
 	 font*inRow*math.floor((step + font*1.5)/
 	       (h - font*1.5))
       step = (step + font*1.5)%(h - font*1.5)
@@ -49,26 +39,16 @@ printTable = function (iterTable, flag, level)
    end
 end
 
-pi = function(tabl, iterFunc, ...)
- local arg = {...}
+pi = function(tabl, iterFunc, freq ) -- ...)
+-- local arg = {...}
  local temp = ''
  for i, el in iterFunc(tabl) do
-  for _ , val in ipairs(arg) do
-   temp = temp .. ':' .. tostring(el.state[val])
-  end
+--  for _ , val in ipairs(arg) do
+    temp = temp .. ':' .. tostring(el.state[freq]) --val])
+--  end
   p(tostring(i) .. ': ' ..temp)
   temp = ''
  end
-end
-
-function love.load()
-   love.window.setMode(win.w, win.h)
-   w, h = love.window.getMode()
-   --   src = love.audio.newSource(sample.sound)
-   --   src:setLooping(true)
-   love.graphics.setBackgroundColor(80,80,80)
-   buildFace(face)
-   loadSound(pads)
 end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
@@ -79,7 +59,7 @@ function love.touchpressed( id, x, y, dx, dy, pressure )
 end
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
-   -- sensor.process(sensor.touches[id],x,y,dx,dy,pressure)
+--   sensor.process(sensor.touches[id],x,y,dx,dy,pressure)
     sensor.register(sensor.touches,id,x,y,pressure)
 end
 
@@ -91,7 +71,7 @@ function love.touchreleased( id, x, y, dx, dy, pressure )
 end
 
 function love.keypressed(key,scancode)
-   sensor.register(sensor.touches,
+--[[   sensor.register(sensor.touches,
 		   key,
 		   string.byte(key)*4,
 		   string.byte(key)*4,
@@ -101,16 +81,30 @@ function love.keypressed(key,scancode)
    elseif key == 'x' then
       -- src:setPitch(2)
    end
+--]]
 end
 
 function love.keyreleased(key,scancode)
-   if key == 'z' then
+--[[   if key == 'z' then
       --      stopNoise(sensor.touches[id])
    end
    if sensor.touches[key] then
       stopNoise(sensor.touches[key])
    end
    sensor.remove(sensor.touches,key)
+--]]
+end
+
+function love.load()
+   love.window.setMode(win.w, win.h)
+   w, h = love.window.getMode()
+   --   src = love.audio.newSource(sample.sound)
+   --   src:setLooping(true)
+   love.graphics.setBackgroundColor(80,80,80)
+   buildFace(face)
+   padInit(face.elements)	
+   loadSound(pads)
+  -- sensor.link(pads,face.elements)
 end
 
 function love.update(dt)
@@ -121,10 +115,10 @@ function love.draw()
 	p('kek', 'reset')
 	face:draw()
 	sensor.draw(sensor.touches)
-	padInit(face.elements)	
 	-- printTable(face.elements)
-	pi(face.elements, ipairs, 'freq')
-	printTable(pads,'r')
-	printTable(sensor.touches,'r')
+		pi(face.elements, ipairs, 'freq')
+		printTable(pads,'r')
+	printTable(sensor.touches)	-- local f,c = 220, 300
+	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))
 end
 
