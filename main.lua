@@ -3,6 +3,21 @@ require('sound')
 require('sensor')
 
 verbose = true
+operationSystem = love.system.getOS()
+fontSize = operationSystem == "Android" and 24 or 12
+win = {}
+
+if operationSystem ~= "Android" then
+   win.w, win.h = 960, 540 -- love.window.getMode() 
+else
+   win.w, win.h = love.window.getMode()
+end
+-- love.window.setMode(win.w, win.h)
+-- w, h = love.window.getMode()
+-- Weird trick for small resolution screens
+
+x0, y0 = 0, 0
+
 
 printProducer = function(font, inRow)
    local step = -font*1.5
@@ -16,14 +31,14 @@ printProducer = function(font, inRow)
       end
        leftBorder =  leftBorder + 
 	 font*inRow*math.floor((step + font*1.5)/
-	       (h - font*1.5))
-      step = (step + font*1.5)%(h - font*1.5)
+	       (win.h - font*1.5))
+      step = (step + font*1.5)%(win.h - font*1.5)
       love.graphics.setColor(255,255,255)
       love.graphics.print(element, leftBorder, step)
    end
 end
 
-p = printProducer(24,22)
+p = printProducer(fontSize,22)
 
 printTable = function (iterTable, flag, level)
    level = level or ''
@@ -51,6 +66,29 @@ pi = function(tabl, iterFunc, freq ) -- ...)
  end
 end
 
+function love.mousepressed( x, y, button, istouch )
+   if operationSystem == "Android" then
+      return
+   end
+   love.touchpressed('mouse', x, y, 0,0, 0.5)
+end
+
+function love.mousereleased( x, y, button, istouch )
+   if operationSystem == "Android" then
+      return
+   end
+   love.touchreleased('mouse', x, y, 0,0, 0.5)
+end
+
+function love.mousemoved(x,y,dx,dy,istouch)
+   if operationSystem == "Android" then
+      return
+   end
+   if sensor.touches['mouse'] then
+      love.touchmoved('mouse', x, y, dx, dy, 0.5)
+   end
+end
+
 function love.touchpressed( id, x, y, dx, dy, pressure )
    sensor.register(sensor.touches,id,x,y,pressure)
    if sensor.touches[id] then
@@ -71,33 +109,14 @@ function love.touchreleased( id, x, y, dx, dy, pressure )
 end
 
 function love.keypressed(key,scancode)
---[[   sensor.register(sensor.touches,
-		   key,
-		   string.byte(key)*4,
-		   string.byte(key)*4,
-		   0.5)
-   if key == 'z' then
-     -- makeNoise(touchTable, id)
-   elseif key == 'x' then
-      -- src:setPitch(2)
-   end
---]]
 end
-
 function love.keyreleased(key,scancode)
---[[   if key == 'z' then
-      --      stopNoise(sensor.touches[id])
-   end
-   if sensor.touches[key] then
-      stopNoise(sensor.touches[key])
-   end
-   sensor.remove(sensor.touches,key)
---]]
 end
 
 function love.load()
    love.window.setMode(win.w, win.h)
-   w, h = love.window.getMode()
+   faceInit()
+   --   w, h = love.window.getMode()
    --   src = love.audio.newSource(sample.sound)
    --   src:setLooping(true)
    love.graphics.setBackgroundColor(80,80,80)
@@ -115,9 +134,9 @@ function love.draw()
 	p('kek', 'reset')
 	face:draw()
 	sensor.draw(sensor.touches)
-	-- printTable(face.elements)
-		pi(face.elements, ipairs, 'freq')
-		printTable(pads,'r')
+	printTable(face.elements)
+	pi(face.elements, ipairs, 'freq')
+	printTable(pads,'r')
 	printTable(sensor.touches)	-- local f,c = 220, 300
 	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))
 end

@@ -1,25 +1,23 @@
 
-win = {}
--- win.w, win.h = 960, 540 -- love.window.getMode() 
-win.w, win.h = love.window.getMode()
--- love.window.setMode(win.w, win.h)
--- w, h = love.window.getMode() -- Weird trick for small resolution screens
+face = {}
 
-x0, y0 = 0, 0
 face = {
-	mode    = 'fill',
-	shape   = 'rectangle',
-	color   = {40,40,40},
-	padding = {t = 0, b = 0, l = 0, r = 0},
-	margin  = {t = 15, b = 10, l = 0, r = 0},
-	radius  = 80,
-	segments = 10
+   mode    = 'fill',
+   shape   = 'rectangle',
+   color   = {40,40,40},
+   padding = {t = 0, b = 0, l = 0, r = 0},
+   margin  = {t = 15, b = 10, l = 0, r = 0},
+   radius  = 80,
+   segments = 10
 }
-face.x = 0 + face.margin.l*win.w/100
-face.y = 0 + face.margin.t*win.h/100
-face.w = win.w*(1 - (face.margin.r + face.margin.l)/100)
-face.h = win.h*(1 - (face.margin.t + face.margin.b)/100)
+
+faceInit = function()
+   face.x = 0 + face.margin.l*win.w/100
+   face.y = 0 + face.margin.t*win.h/100
+   face.w = win.w*(1 - (face.margin.r + face.margin.l)/100)
+   face.h = win.h*(1 - (face.margin.t + face.margin.b)/100)
 -- face.elements = {}
+end
 
 face.draw = function(self)
  local drawFunc = self.shape == 'round'
