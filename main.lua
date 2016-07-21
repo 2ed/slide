@@ -91,19 +91,25 @@ end
 
 function love.touchpressed( id, x, y, dx, dy, pressure )
    sensor.register(sensor.touches,id,x,y,pressure)
-   if sensor.touches[id] then
+ --[[  if sensor.touches[id]
+      and sensor.touches[id].bType == 'btn'
+   then
       makeNoise(sensor.touches[id])
-   end
+    end --]]
 end
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
 --   sensor.process(sensor.touches[id],x,y,dx,dy,pressure)
-    sensor.register(sensor.touches,id,x,y,pressure)
+    sensor.register(sensor.touches,id,x,y,pressure, true)
 end
 
 function love.touchreleased( id, x, y, dx, dy, pressure )
-   if sensor.touches[id] then
-      stopNoise(sensor.touches[id])
+   if sensor.touches[id]
+      and sensor.touches[id].bType == 'btn'
+    then
+       stopNoise(sensor.touches[id])
+ --  else
+ --     sensor.touches[id].row = 0
    end
    sensor.remove(sensor.touches,id)
 end
@@ -121,7 +127,7 @@ function love.load()
    --   src:setLooping(true)
    love.graphics.setBackgroundColor(80,80,80)
    buildFace(face)
-   padInit(face.elements)	
+   padInit(pads)	
    loadSound(pads)
   -- sensor.link(pads,face.elements)
 end
@@ -134,10 +140,9 @@ function love.draw()
 	p('kek', 'reset')
 	face:draw()
 	sensor.draw(sensor.touches)
-	printTable(face.elements)
-	pi(face.elements, ipairs, 'freq')
-	printTable(pads,'r')
-	printTable(sensor.touches)	-- local f,c = 220, 300
+--	printTable(face.elements, 'r')
+--	printTable(pads,'r')
+	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
 	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))
 end
 

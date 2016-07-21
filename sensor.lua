@@ -15,47 +15,77 @@ pads = {
    {btn = {}, str = {}, freq = 440},
 }
 
+
 padInit = function(padList)
  for i, pad in ipairs(padList) do
-  pad.state = {
-  	freq = 440*2^(3-i),
-  	str = {{pos = 0, id = 'top'}},
-  	btn = {},
-  }
+    for j = 1, 5 do
+       pad.btn[j] = {}
+       pad.btn[j].freq = setFreq(pad.freq,1200*(j-4))
+    end
  end
 end
 
 sensor.touches = {}
 
---[[
-sensor.link = function(pad,face)
-   for i, el in ipairs(face) do
-      setmetatable(pad[i],face[i])
 
-      pad[i].__index = face[i]
-      pad[i].__newindex = function(t,i,v)
-	 rawset(t,i,v)
-      end
-   end
-end
+--[[ 
+
+So, here's the plan:
+Once you hit the button/pad you are 
+sticked  to it until the finger is released,
+unless you are strumming to neighbouring button.
+
+Rows mean initial state, cols -- next state.
+Aaand, opposite when released.
+
+           ---------------------------------
+           || empty   |   pad   |  button  |
+--------------------------------------------
+--------------------------------------------
+| was empty||   do    | reg ID  |  reg ID  |
+| (Pressed || nothing |set Pitch|   play   |
+| or moved)||         |         |          |
+--------------------------------------------
+| was pad  ||   do    | update  |    do    | 
+| (moved)  || nothing |pos Pitch|  nothing | 
+--------------------------------------------
+--------------------------------------------
+| to empty ||   do    | rem ID  |  rem ID  | 
+|(Released)|| nothing |  set 0  |   stop   | 
+|          ||         |  Pitch  |          |
+--------------------------------------------
+
+
 --]]
 
-sensor.register = function(touchTable,id,x,y,pressure)
---   local row, block, pos = sensor.check(x,y,pressure)
-  local tId = sensor.check(x,y,pressure) 
-   if not tId and not sensor.touches[id] then
+sensor.register = function(touchTable,id,x,y,pressure, moved)
+   local newTouch = sensor.check(x,y,pressure)
+--   local previousTouch = sensor.touch[id]
+   if not newTouch and not sensor.touches[id] then
       return
-   elseif not tId and sensor.touches[id] then
+   elseif not newTouch and sensor.touches[id]
+      and not moved
+   then
+      -- if
       stopNoise(sensor.touches[id])
-   elseif tId and not sensor.touches[id] then
-      touchTable[id] = tId
-      makeNoise(sensor.touches[id])
-   elseif tId.row ~= sensor.touches[id].row then
+   elseif newTouch and not sensor.touches[id]
+    then
+      touchTable[id] = newTouch
+      if newTouch.bType == 'btn' then
+	 makeNoise(sensor.touches[id])
+      end
+   elseif newTouch.row ~= sensor.touches[id].row
+      and newTouch.bType == 'btn'
+   then
       stopNoise(sensor.touches[id])
-      touchTable[id] = tId
-      makeNoise(sensor.touches[id])
+      touchTable[id] = newTouch
+      if newTouch.bType == 'btn' then
+	 makeNoise(sensor.touches[id])
+      end
    else
-      makeNoise(sensor.touches[id])
+      if newTouch.bType == 'btn' then
+	 makeNoise(sensor.touches[id])
+      end
    end
 end
 

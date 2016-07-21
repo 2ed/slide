@@ -36,8 +36,44 @@ Oscillator = function(waveForm,freq)
    return osc
 end
 
+
+makeNoise = function(id)
+   pads[id.row].btn[id.pos].src:play()
+end
+
+stopNoise = function(id)
+   pads[id.row].btn[id.pos].src:stop()
+end
+
+setFreq = function(referenceFreq, cents)
+   return referenceFreq*2^(cents/1200)
+end
+
 loadSound = function(pads)
-   for i, pad in ipairs(pads) do      
+   for i, pad in ipairs(pads) do
+      for j, btn in ipairs(pad.btn) do 
+	 local len = math.floor(sample.cfg.rate/btn.freq) 
+	 local padOsc = Oscillator('saw', btn.freq)
+	 btn.sound = love.sound.newSoundData(
+	    math.floor(sample.cfg.len/btn.freq),
+	    sample.cfg.rate,
+	    sample.cfg.bits,
+	    sample.cfg.channel
+	 )   
+	 for i = 0, len - 1 do
+	    local smpl = padOsc() * sample.cfg.amp
+	    btn.sound:setSample(i,smpl)
+	 end
+	 btn.src = love.audio.newSource(btn.sound)
+	 btn.src:setLooping(true)
+      end
+   end
+end
+
+--[[
+loadSound = function(pads)
+   for i, pad in ipairs(pads) do
+--      for j, btn in ipairs(pad.btn) do 
       pad.len = math.floor(sample.cfg.rate/pad.freq) -- single period
       local padOsc = Oscillator('saw',pad.freq)
       pad.sound = love.sound.newSoundData(
@@ -54,15 +90,4 @@ loadSound = function(pads)
       pad.src:setLooping(true)
    end
 end
-
-makeNoise = function(id)
-   pads[id.row].src:play()
-end
-
-stopNoise = function(id)
-   pads[id.row].src:stop()
-end
-
-setFreq = function(referenceFreq, cents)
-   return referenceFreq*2^(cents/1200)
-end
+--]]
