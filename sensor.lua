@@ -4,9 +4,9 @@ sensor = {}
 -- Dropped Down
 pads = { 
    -- E
-   {btn = {}, pad = {}, freq = 1318.51},
+--   {btn = {}, pad = {}, freq = 1318.51},
    -- C#
-   {btn = {}, pad = {}, freq = 1108.73},
+--   {btn = {}, pad = {}, freq = 1108.73},
    -- A
    {btn = {}, pad = {}, freq = 880},
    -- E

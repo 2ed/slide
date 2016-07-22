@@ -87,7 +87,7 @@ face.split = function(self, parts, align, template, initPart)
 end
 
 buildFace = function(face)
-	face:split(5,'v',
+	face:split(#pads,'v',
    {
 	   margin = {t = 10, b = 10, l = 0.5, r = 0}, 
 		  color = {80,180,230}

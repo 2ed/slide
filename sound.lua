@@ -50,7 +50,9 @@ updatePad = function(rowNum, newId, pos)
    row.pad.pos = pos
    row.pad.id = newId
    for i, btn in ipairs(row.btn) do
-      btn.src:setPitch(pos)
+      local pitch = setFreq(btn.freq,(math.ceil((pos - 1)*12)*100))/btn.freq
+      -- btn.src:setPitch(pos)
+      btn.src:setPitch(pitch)
    end
 end
 
