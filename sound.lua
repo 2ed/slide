@@ -45,6 +45,15 @@ stopNoise = function(id)
    pads[id.row].btn[id.pos].src:stop()
 end
 
+updatePad = function(rowNum, newId, pos)
+   local row = pads[rowNum]
+   row.pad.pos = pos
+   row.pad.id = newId
+   for i, btn in ipairs(row.btn) do
+      btn.src:setPitch(pos)
+   end
+end
+
 setFreq = function(referenceFreq, cents)
    return referenceFreq*2^(cents/1200)
 end

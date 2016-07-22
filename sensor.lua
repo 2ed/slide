@@ -4,15 +4,15 @@ sensor = {}
 -- Dropped Down
 pads = { 
    -- E
-   {btn = {}, str = {}, freq = 1318.51},
+   {btn = {}, pad = {}, freq = 1318.51},
    -- C#
-   {btn = {}, str = {}, freq = 1108.73},
+   {btn = {}, pad = {}, freq = 1108.73},
    -- A
-   {btn = {}, str = {}, freq = 880},
+   {btn = {}, pad = {}, freq = 880},
    -- E
-   {btn = {}, str = {}, freq = 659.25},
+   {btn = {}, pad = {}, freq = 659.25},
    -- A
-   {btn = {}, str = {}, freq = 440},
+   {btn = {}, pad = {}, freq = 440},
 }
 
 
@@ -58,42 +58,110 @@ Aaand, opposite when released.
 
 --]]
 
+--[[ old register function
 sensor.register = function(touchTable,id,x,y,pressure, moved)
    local newTouch = sensor.check(x,y,pressure)
---   local previousTouch = sensor.touch[id]
-   if not newTouch and not sensor.touches[id] then
+   if not newTouch and not touchTable[id] then
       return
-   elseif not newTouch and sensor.touches[id]
-  --    and not moved
+   elseif not newTouch and touchTable[id]
+      --   and not moved
    then
-      -- if
-      stopNoise(sensor.touches[id])
-   elseif newTouch and not sensor.touches[id]
+      if touchTable[id].bType == 'btn' then
+	 stopNoise(touchTable[id])
+      end
+   elseif newTouch and not touchTable[id]
     then
       touchTable[id] = newTouch
       if newTouch.bType == 'btn' then
-	 makeNoise(sensor.touches[id])
+	 makeNoise(touchTable[id])
       end
-   elseif newTouch.row ~= sensor.touches[id].row
+   elseif newTouch.row ~= touchTable[id].row
       and newTouch.bType == 'btn'
    then
-      stopNoise(sensor.touches[id])
+      stopNoise(touchTable[id])
       touchTable[id] = newTouch
-      if newTouch.bType == 'btn' then
-	 makeNoise(sensor.touches[id])
-      end
-   else
-      if newTouch.bType == 'btn' then
-	 makeNoise(sensor.touches[id])
+      makeNoise(touchTable[id])
+  else
+     if newTouch.bType == 'btn'
+	and touchTable[id].bType == 'btn'
+	and newTouch.pos ~= touchTable[id].pos
+     then
+	stopNoise(touchTable[id])
+	touchTable[id] = newTouch
+	makeNoise(touchTable[id])
       end
    end
+   if touchTable[id] and newTouch then
+      touchTable[id].pressure = newTouch.pressure
+      touchTable[id].moved = ( moved and ' moved' or '')
+      touchTable[id].x = newTouch.x
+      touchTable[id].y = newTouch.y
+      touchTable[id].pos = newTouch.pos
+   end
+end
+--]]
+
+sensor.register = function(touchTable,id,x,y,pressure, moved)
+   local newTouch = sensor.check(x,y,pressure)
+   if not touchTable[id] then
+      -- When touch pressed
+      if not newTouch then
+	 -- No element is pressed
+	 return
+      else
+	 -- Register new touch and update pad state
+	 touchTable[id] = newTouch
+	 sensor.add(touchTable,id)
+      end
+   elseif touchTable[id].bType == 'btn' 
+      and newTouch and newTouch.bType == 'btn'
+   then
+      -- Moved from button
+      -- to button
+      if (newTouch.row ~= touchTable[id].row 
+	      or newTouch.pos ~= touchTable[id].pos)
+      then
+	 -- Buttons are not the same,
+	 -- reset state to new
+	 sensor.remove(touchTable, id)
+	 touchTable[id] = newTouch
+	 sensor.add(touchTable, id)
+      else
+	 -- Same button,
+	 -- set volume from pressure
+	 
+	 --	 pads[newTouch.row].btn[newTouch.pos].src:setVolume(
+	 -- math.sqrt(pressure,10))
+      end
+   elseif touchTable[id].bType == 'pad' then 
+      -- Only pos updating
+      local pad = touchTable[id]
+      local xm = math.max(pad.x0,x)
+      local xM = math.min(pad.x0 + pad.w,xm)
+      local pos = (xM - pad.x0)/pad.w + 1
+      updatePad(pad.row,id,pos)
+   end
+      
 end
 
 sensor.process = function(tch, x, y, dx, dy, pressure)
   -- tch = sensor.check(x,y,pressure)
 end
 
+sensor.add = function(touchTable,id)
+   if touchTable[id].bType == 'btn' then
+      makeNoise(touchTable[id])
+   else
+      updatePad(touchTable[id].row,id, touchTable[id].pos)
+   end
+end
+
 sensor.remove = function(touchTable,id)
+   if touchTable[id].bType == 'btn' then
+      stopNoise(touchTable[id])
+   else
+      updatePad(touchTable[id].row,'noid', 1)
+   end
    touchTable[id] = null
 end
 
@@ -122,6 +190,10 @@ function sensor.check(x,y,pressure)
 		  row = i,
 		  x = x,
 		  y = y,
+		  x0 = block.x,
+		  y0 = block.y,
+		  w = block.w,
+		  h = block.h,
 		  pressure = pressure,
 		  bType = j == 1  -- 1 or 2
 		     and 'pad'
