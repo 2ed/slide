@@ -64,7 +64,7 @@ sensor.register = function(touchTable,id,x,y,pressure, moved)
    if not newTouch and not sensor.touches[id] then
       return
    elseif not newTouch and sensor.touches[id]
-      and not moved
+  --    and not moved
    then
       -- if
       stopNoise(sensor.touches[id])
