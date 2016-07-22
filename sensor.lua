@@ -133,7 +133,9 @@ sensor.register = function(touchTable,id,x,y,pressure, moved)
 	 --	 pads[newTouch.row].btn[newTouch.pos].src:setVolume(
 	 -- math.sqrt(pressure,10))
       end
-   elseif touchTable[id].bType == 'pad' then 
+   elseif touchTable[id].bType == 'pad'
+      and pads[touchTable[id].row].pad.id == id
+   then 
       -- Only pos updating
       local pad = touchTable[id]
       local xm = math.max(pad.x0,x)
@@ -159,7 +161,8 @@ end
 sensor.remove = function(touchTable,id)
    if touchTable[id].bType == 'btn' then
       stopNoise(touchTable[id])
-   else
+   elseif pads[touchTable[id].row].pad.id == id then
+      -- Resetting only last pad finger
       updatePad(touchTable[id].row,'noid', 1)
    end
    touchTable[id] = null
