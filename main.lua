@@ -8,6 +8,10 @@ require('sensor')
 -- Remove comment below for shitsound: 
 -- microchromatics = true
 
+-- Set the form: 'square', 'saw' or 'sin'
+waveForm = 'square'
+
+
 operationSystem = love.system.getOS()
 fontSize = operationSystem == "Android" and 24 or 12
 win = {}

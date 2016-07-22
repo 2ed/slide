@@ -5,7 +5,7 @@ sample = {
       rate = 44100,
       bits = 16,
       channel = 1,
-      amp = 0.2,
+      amp = 0.8,
    },
 }
 
@@ -23,7 +23,7 @@ Oscillator = function(waveForm,freq)
 	 end
 	 return math.sin(phase*freq)
       end
-   else
+   elseif waveForm == 'saw' then
       local step = math.floor(sample.cfg.rate/freq)
       osc = function()
 	 phase = phase + 1
@@ -31,6 +31,15 @@ Oscillator = function(waveForm,freq)
 	    phase = -step
 	 end
 	 return phase/step
+      end
+   elseif waveForm == 'square' then
+      local step = math.floor(sample.cfg.rate/freq)
+      osc = function()
+	 phase = phase + 1
+	 if phase == step then
+	    phase = 0
+	 end
+	 return (-1)^math.floor(2*phase/step)
       end
    end
    return osc
@@ -53,9 +62,10 @@ updatePad = function(rowNum, newId, pos)
       -- If microchromatics are off then
       -- sets normalized tone step,
       -- otherwise sounds like a sad elephant
-      local pitch = microchromatics
-	 and pos 
-	 or setFreq(btn.freq,(math.ceil((pos - 1)*12)*100))/btn.freq
+      local shift =  microchromatics
+	 and (pos - 1)*12
+	 or math.ceil((pos - 1)*12)
+      local pitch = setFreq(btn.freq,(shift*100))/btn.freq
       btn.src:setPitch(pitch)
    end
 end
@@ -68,7 +78,7 @@ loadSound = function(pads)
    for i, pad in ipairs(pads) do
       for j, btn in ipairs(pad.btn) do 
 	 local len = math.floor(sample.cfg.rate/btn.freq) 
-	 local padOsc = Oscillator('saw', btn.freq)
+	 local padOsc = Oscillator(waveForm, btn.freq)
 	 btn.sound = love.sound.newSoundData(
 	    math.floor(sample.cfg.len/btn.freq),
 	    sample.cfg.rate,
@@ -85,24 +95,3 @@ loadSound = function(pads)
    end
 end
 
---[[
-loadSound = function(pads)
-   for i, pad in ipairs(pads) do
---      for j, btn in ipairs(pad.btn) do 
-      pad.len = math.floor(sample.cfg.rate/pad.freq) -- single period
-      local padOsc = Oscillator('saw',pad.freq)
-      pad.sound = love.sound.newSoundData(
-	 math.floor(sample.cfg.len/pads[i].freq),
-	 sample.cfg.rate,
-	 sample.cfg.bits,
-	 sample.cfg.channel
-      )   
-      for i = 0, pad.len - 1 do
-	 local smpl = padOsc() * sample.cfg.amp
-	 pad.sound:setSample(i,smpl)
-      end
-      pad.src = love.audio.newSource(pad.sound)
-      pad.src:setLooping(true)
-   end
-end
---]]

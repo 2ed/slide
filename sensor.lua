@@ -1,6 +1,14 @@
 require("gui")
 sensor = {}
 
+tones ={
+   A4 = 440,
+   E4 = 329.63,
+   A3 = 220,
+   D4 = 293.66,
+   G3 = 196,
+   C3 = 130,81,
+}
 -- Dropped Down
 pads = { 
    -- E
@@ -8,11 +16,11 @@ pads = {
    -- C#
 --   {btn = {}, pad = {}, freq = 1108.73},
    -- A
-   {btn = {}, pad = {}, freq = 880},
+   {btn = {}, pad = {}, freq = tones.D4},
    -- E
-   {btn = {}, pad = {}, freq = 659.25},
+   {btn = {}, pad = {}, freq = tones.G3},
    -- A
-   {btn = {}, pad = {}, freq = 440},
+   {btn = {}, pad = {}, freq = tones.C3},
 }
 
 
@@ -20,7 +28,7 @@ padInit = function(padList)
  for i, pad in ipairs(padList) do
     for j = 1, 5 do
        pad.btn[j] = {}
-       pad.btn[j].freq = setFreq(pad.freq,1200*(j-4))
+       pad.btn[j].freq = setFreq(pad.freq,1200*(j-3))
     end
  end
 end
