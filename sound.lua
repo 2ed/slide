@@ -50,8 +50,12 @@ updatePad = function(rowNum, newId, pos)
    row.pad.pos = pos
    row.pad.id = newId
    for i, btn in ipairs(row.btn) do
-      local pitch = setFreq(btn.freq,(math.ceil((pos - 1)*12)*100))/btn.freq
-      -- btn.src:setPitch(pos)
+      -- If microchromatics are off then
+      -- sets normalized tone step,
+      -- otherwise sounds like a sad elephant
+      local pitch = microchromatics
+	 and pos 
+	 or setFreq(btn.freq,(math.ceil((pos - 1)*12)*100))/btn.freq
       btn.src:setPitch(pitch)
    end
 end

@@ -2,7 +2,12 @@ require('gui')
 require('sound')
 require('sensor')
 
+-- Remove comment below for shitstorm:
 -- verbose = true
+
+-- Remove comment below for shitsound: 
+-- microchromatics = true
+
 operationSystem = love.system.getOS()
 fontSize = operationSystem == "Android" and 24 or 12
 win = {}
