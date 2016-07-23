@@ -2,6 +2,10 @@
 template = {
    buttonPanel = {},
    padsPanel = {},
+   background = {
+      margin = {t = 10, b = 10, l = 0.5, r = 0}, 
+      color = {80,180,230}
+   },
    panels  = {
       color = {40,40,40},
       margin = {t = 5, b = 5, l = 2, r = 5},
@@ -113,19 +117,11 @@ face.split = function(self, parts, align, template, initPart)
 end
 
 buildFace = function(face)
-   face:split(#pads,'v',
-	      {
-		 margin = {t = 10, b = 10, l = 0.5, r = 0}, 
-		 color = {80,180,230}
-	      }
-   )
+   face:split(#pads,'v', template.background)
    for i, el in ipairs(face.elements) do
       el:split(2,'h', template.panels)
---      el.elements[1].margin = {t = 20, b = 20, l = 2, r = 80}
-      el.elements[1]:split(12,'h', 
-			   template.frets)
+      el.elements[1]:split(12,'h',template.frets)
       el.elements[2].color = {255,255,255}
-      el.elements[2]:split(5,'h', 
-			   template.buttons)
+      el.elements[2]:split(5,'h', template.buttons)
    end
 end

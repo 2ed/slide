@@ -66,49 +66,6 @@ Aaand, opposite when released.
 
 --]]
 
---[[ old register function
-sensor.register = function(touchTable,id,x,y,pressure, moved)
-   local newTouch = sensor.check(x,y,pressure)
-   if not newTouch and not touchTable[id] then
-      return
-   elseif not newTouch and touchTable[id]
-      --   and not moved
-   then
-      if touchTable[id].bType == 'btn' then
-	 stopNoise(touchTable[id])
-      end
-   elseif newTouch and not touchTable[id]
-    then
-      touchTable[id] = newTouch
-      if newTouch.bType == 'btn' then
-	 makeNoise(touchTable[id])
-      end
-   elseif newTouch.row ~= touchTable[id].row
-      and newTouch.bType == 'btn'
-   then
-      stopNoise(touchTable[id])
-      touchTable[id] = newTouch
-      makeNoise(touchTable[id])
-  else
-     if newTouch.bType == 'btn'
-	and touchTable[id].bType == 'btn'
-	and newTouch.pos ~= touchTable[id].pos
-     then
-	stopNoise(touchTable[id])
-	touchTable[id] = newTouch
-	makeNoise(touchTable[id])
-      end
-   end
-   if touchTable[id] and newTouch then
-      touchTable[id].pressure = newTouch.pressure
-      touchTable[id].moved = ( moved and ' moved' or '')
-      touchTable[id].x = newTouch.x
-      touchTable[id].y = newTouch.y
-      touchTable[id].pos = newTouch.pos
-   end
-end
---]]
-
 sensor.register = function(touchTable,id,x,y,pressure, moved)
    local newTouch = sensor.check(x,y,pressure)
    if not touchTable[id] then
