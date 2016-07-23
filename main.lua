@@ -13,7 +13,7 @@ waveForm = 'square'
 
 
 operationSystem = love.system.getOS()
-fontSize = operationSystem == "Android" and 24 or 12
+fontSize = operationSystem == "Android" and 24 or 10
 win = {}
 
 if operationSystem ~= "Android" then
@@ -118,7 +118,7 @@ end
 function love.keyreleased(key,scancode)
 end
 
-testo = ''
+-- testo = ''
 
 function love.load()
    love.window.setMode(win.w, win.h)
@@ -141,10 +141,10 @@ function love.draw()
 	p('kek', 'reset')
 	face:draw()
 	if verbose then	sensor.draw(sensor.touches) end
---	printTable(face.elements, 'r')
+	printTable(face.elements, 'r')
 --	printTable(pads,'r')
-	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
+--	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
 	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))
-	p(testo)
+--	p(testo)
 end
 

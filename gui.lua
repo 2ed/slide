@@ -1,4 +1,25 @@
 
+template = {
+   buttonPanel = {},
+   padsPanel = {},
+   panels  = {
+      color = {40,40,40},
+      margin = {t = 5, b = 5, l = 2, r = 5},
+   },
+   frets = {
+      color = {120,80,80}, 
+      shape = 'rectangle',
+      mode = 'line',
+      margin = {t = 0, b = 0, l = 0, r = 0},
+   },   
+   buttons = {
+      --	color = {255,230,153}, 
+      color = {230, 191, 81},
+      shape = 'round',
+      -- margin = {t = 0, b = 0, l = 0, r = 0}
+   }
+}
+
 face = {}
 
 face = {
@@ -40,9 +61,17 @@ end
 face.newElement = function(self, o)
 	o = o or {}
 	setmetatable(o,self)
-	self.__index = self
-	self.__newindex = function(table, key, value)
-		rawset(table, key, value)
+	self.__index = function(t,key)
+	   if key == 'w' then
+	      return t.width  * (1 - (t.margin.l + t.margin.r)/100)
+	   elseif key == 'h' then
+	      return t.height * (1 - (t.margin.t + t.margin.b)/100)
+	   else
+	      return self[key]
+	   end
+	end
+	self.__newindex = function(t, key, value)
+		rawset(t, key, value)
 	end
 	o.elements = {}
 	return o
@@ -76,45 +105,27 @@ face.split = function(self, parts, align, template, initPart)
 	 + el.margin.l*width/100 + xPlus*(i - 1)*width 
       el.y = self.y + self.padding.t*self.h/100
 	 + el.margin.t*height/100 + yPlus*(i - 1)*height 
-      el.w = width  * (1 - (el.margin.l + el.margin.r)/100)
-      el.h = height * (1 - (el.margin.t + el.margin.b)/100)
+      el.width = width
+      el.height = height
+      -- el.w = width  * (1 - (el.margin.l + el.margin.r)/100)
+      -- el.h = height * (1 - (el.margin.t + el.margin.b)/100)
    end
-   local width  = self.w*
-      (1 - (self.padding.l + self.padding.r)/100)/(parts^xPlus)
-   local height = self.h*
-      (1 - (self.padding.t + self.padding.b)/100)/(parts^yPlus)
-
 end
 
 buildFace = function(face)
-	face:split(#pads,'v',
-   {
-	   margin = {t = 10, b = 10, l = 0.5, r = 0}, 
-		  color = {80,180,230}
-	 	}
-	)
-	for i, el in ipairs(face.elements) do
-		el:split(2,'h', 
-			  {color = {40,40,40},
-			  margin = {t = 5, b = 5, l = 2, r = 5} })
-		face.pad = el.elements[1]
-		face.btn = el.elements[2]
-		el.elements[1].margin = {t = 20, b = 20, l = 2, r = 80}
-		el.elements[1]:split(12,'h', 
-			{
-				color = {120,80,80}, 
-				shape = 'rectangle',
-				mode = 'line',
-		  margin = {t = 0, b = 0, l = 0, r = 0}
-			})
-		-- el.elements[2].margin = {t = 0, b = 0, l = 0, r = 0}
-		el.elements[2].color = {255,255,255}
-		el.elements[2]:split(5,'h', 
-			{
-			--	color = {255,230,153}, 
-			 color = {230, 191, 81},
-				shape = 'round',
-		  -- margin = {t = 0, b = 0, l = 0, r = 0}
-			})
-	end
+   face:split(#pads,'v',
+	      {
+		 margin = {t = 10, b = 10, l = 0.5, r = 0}, 
+		 color = {80,180,230}
+	      }
+   )
+   for i, el in ipairs(face.elements) do
+      el:split(2,'h', template.panels)
+--      el.elements[1].margin = {t = 20, b = 20, l = 2, r = 80}
+      el.elements[1]:split(12,'h', 
+			   template.frets)
+      el.elements[2].color = {255,255,255}
+      el.elements[2]:split(5,'h', 
+			   template.buttons)
+   end
 end
