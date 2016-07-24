@@ -9,7 +9,7 @@ require('sensor')
 -- microchromatics = true
 
 -- Set the form: 'square', 'saw' or 'sin'
-waveForm = 'square'
+waveForm = 'saw'
 
 
 operationSystem = love.system.getOS()

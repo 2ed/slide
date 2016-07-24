@@ -63,8 +63,8 @@ updatePad = function(rowNum, newId, pos)
       -- sets normalized tone step,
       -- otherwise sounds like a sad elephant
       local shift =  microchromatics
-	 and (1 - pos)*12
-	 or math.ceil((1 - pos)*12)
+	 and (pos - 1)*12
+	 or math.ceil((pos - 1)*12)
       local pitch = setFreq(btn.freq,(shift*100))/btn.freq
       btn.src:setPitch(pitch)
    end

@@ -105,7 +105,7 @@ sensor.register = function(touchTable,id,x,y,pressure, moved)
       local pad = touchTable[id]
       local xm = math.max(pad.x0,x)
       local xM = math.min(pad.x0 + pad.w,xm)
-      local pos = (xM - pad.x0)/pad.w + 1
+      local pos = 2 - (xM - pad.x0)/pad.w 
       updatePad(pad.row,id,pos)
    end
       
@@ -158,24 +158,27 @@ function sensor.check(x,y,pressure)
 	       and x >  el.x
 	       and x < el.x + el.w
 	    then
-	       posX =  align == 'v'
+	       posX =  j == 1
 		  and (x - el.x)/el.w
 		  or (y - el.y)/el.h
 	       state = {
-	       row = 4 - i,
-	       x = x,
-	       y = y,
-	       x0 = el.x,
-	       y0 = el.y,
-	       w = el.w,
-	       h = el.h,
-	       pressure = pressure,
-	       bType = j == 1  -- 1 or 2
-		  and 'pad'
-		  or 'btn',
-	       pos = j == 1
-		  and posX
-		  or math.floor(posX*5  + 1)}
+		  row = j == 1
+		     and 4 - i
+		     or 4 - i,
+		  x = x,
+		  y = y,
+		  x0 = el.x,
+		  y0 = el.y,
+		  w = el.w,
+		  h = el.h,
+		  pressure = pressure,
+		  bType = j == 1  -- 1 or 2
+		     and 'pad'
+		     or 'btn',
+		  pos = j == 1
+		     and 2 - posX
+		     or math.floor(posX*5  + 1)
+	       }
 	    end
 	 end
       end
