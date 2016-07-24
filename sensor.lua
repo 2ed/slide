@@ -143,7 +143,7 @@ end
 
 function sensor.check(x,y,pressure)
    local state = null
-   local t = face.elements
+   local t = face.layout
    local posX = null
    for j, block in ipairs(t) do
       if y > block.y
@@ -162,7 +162,7 @@ function sensor.check(x,y,pressure)
 		  and (x - el.x)/el.w
 		  or (y - el.y)/el.h
 	       state = {
-	       row = i,
+	       row = 4 - i,
 	       x = x,
 	       y = y,
 	       x0 = el.x,

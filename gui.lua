@@ -35,7 +35,7 @@ buildFace = function(face)
       if i == 2 then 
 --	 block.margin = {t = 10, b = 5, l = 2, r = 5}
 --      else
-	 block.margin = {t = 5, b = 5, l = 2, r = 8}
+	 block.margin = {t = 0, b = 0, l = 2, r = 8}
       end
       block:split(#pads,i == 1 and 'v' or 'h', template.panels)
       for j, el in ipairs(block.elements) do
