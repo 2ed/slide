@@ -148,6 +148,8 @@ function sensor.check(x,y,pressure)
    for j, block in ipairs(t) do
       if y > block.y
 	 and y < block.y + block.h
+	 and x > block.x
+	 and x < block.x + block.w
       then
 	 for i, el in ipairs(block.elements) do
 	    -- print(x, el.x, el.x + el.w, ' : ', y, el.y, el.y + el.h)
@@ -156,7 +158,9 @@ function sensor.check(x,y,pressure)
 	       and x >  el.x
 	       and x < el.x + el.w
 	    then
-	       posX =  (x - el.x)/el.w 
+	       posX =  align == 'v'
+		  and (x - el.x)/el.w
+		  or (y - el.y)/el.h
 	       state = {
 	       row = i,
 	       x = x,

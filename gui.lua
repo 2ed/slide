@@ -3,21 +3,23 @@ template = {
    buttonPanel = {},
    padsPanel = {},
    background = {
---      margin = {t = 10, b = 10, l = 0.5, r = 0}, 
-      color = {50, 64, 78}
+      margin = {t = 0, b = 0, l = 0, r = 0}, 
+      --      color = {50, 64, 78}
+      color = {50, 64, 78} -- {43, 76,111}
    },
    panels  = {
       color = {38, 43, 43},
       margin = {t = 5, b = 5, l = 2, r = 5},
    },
    frets = {
+      -- color = {220,101, 13},
       color = {120,80,80}, 
       shape = 'rectangle',
       mode = 'line',
       margin = {t = 0, b = 0, l = 0, r = 0},
    },   
    buttons = {
-      color = {120,101, 73}, 
+      color = {35,106, 98}, --{120,101, 73}, 
       --      color = {45, 74, 71},
       --      shape = 'round',
       shape = 'rectangle',
@@ -27,15 +29,21 @@ template = {
 
 buildFace = function(face)
    face:split(2,'v', template.background)
-   face.elements[2].color = {8,137,123}
-   for i , block in ipairs(face.elements) do 
-      block:split(#pads,'v', template.panels)
+   face.elements[2]:split(2,'h', template.background)
+   face.layout = {face.elements[1],face.elements[2].elements[2]}
+   for i , block in ipairs(face.layout) do
+      if i == 2 then 
+--	 block.margin = {t = 10, b = 5, l = 2, r = 5}
+--      else
+	 block.margin = {t = 5, b = 5, l = 2, r = 8}
+      end
+      block:split(#pads,i == 1 and 'v' or 'h', template.panels)
       for j, el in ipairs(block.elements) do
---	 el:split(2,'h', template.panels)
 	 if i == 1 then
+	    el.color = {170,105, 57},
 	    el:split(12,'h',template.frets)
 	 else
-	    el:split(5,'h', template.buttons)
+	    el:split(5,'v', template.buttons)
 	 end
       end
    end
@@ -46,6 +54,7 @@ end
 face = {}
 
 face = {
+   align  = 'v',
    mode    = 'fill',
    shape   = 'rectangle',
    --   color   = {40,40,40},
@@ -119,6 +128,7 @@ face.split = function(self, parts, align, template, initPart)
    for i= initPart or 1, parts do
       self.elements[i] = self:newElement()
       local el = self.elements[i] 
+      el.align   = align
       el.mode    = template.mode    or 'fill'
       el.shape   = template.shape   or 'shape'
       el.color   = template.color   or {40,100,100}
