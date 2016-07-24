@@ -174,7 +174,7 @@ function sensor.check(x,y,pressure)
 		  and 'pad'
 		  or 'btn',
 	       pos = j == 1
-		  and (posX + 1)
+		  and posX
 		  or math.floor(posX*5  + 1)}
 	    end
 	 end
