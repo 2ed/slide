@@ -2,10 +2,10 @@ require('gui')
 require('sound')
 require('sensor')
 
--- Remove comment below for shitstorm:
+-- Decomment below for shitstorm:
 -- verbose = true
 
--- Remove comment below for shitsound: 
+-- Decomment below for shitsound: 
 -- microchromatics = true
 
 -- Set the form: 'square', 'saw' or 'sin'
@@ -51,13 +51,14 @@ p = printProducer(fontSize,22)
 
 printTable = function (iterTable, flag, level)
    level = level or ''
+   if   #level/2 == flag then return end
    for elName, elValue in pairs(iterTable) do
       p(level .. (string.match(tostring(type(elName)),'[sn][tu]')
 	    and elName
 	    or tostring(type(elName)) ).. ': ' .. (tostring(elValue)))
       if flag then
 	 if tostring(type(iterTable[elName])) == 'table' then
-	    printTable(iterTable[elName],'r', level .. '  ')
+	    printTable(iterTable[elName],flag, level .. '  ')
 	 end
       end
    end
@@ -126,7 +127,7 @@ function love.load()
    --   w, h = love.window.getMode()
    --   src = love.audio.newSource(sample.sound)
    --   src:setLooping(true)
-   love.graphics.setBackgroundColor(80,80,80)
+   love.graphics.setBackgroundColor( 40, 43, 45)
    buildFace(face)
    padInit(pads)	
    loadSound(pads)
@@ -141,7 +142,7 @@ function love.draw()
 	p('kek', 'reset')
 	face:draw()
 	if verbose then	sensor.draw(sensor.touches) end
-	printTable(face.elements, 'r')
+--	printTable(face.elements, 4)
 --	printTable(pads,'r')
 --	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
 	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))

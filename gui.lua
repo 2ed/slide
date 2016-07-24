@@ -3,11 +3,11 @@ template = {
    buttonPanel = {},
    padsPanel = {},
    background = {
-      margin = {t = 10, b = 10, l = 0.5, r = 0}, 
-      color = {80,180,230}
+--      margin = {t = 10, b = 10, l = 0.5, r = 0}, 
+      color = {50, 64, 78}
    },
    panels  = {
-      color = {40,40,40},
+      color = {38, 43, 43},
       margin = {t = 5, b = 5, l = 2, r = 5},
    },
    frets = {
@@ -17,21 +17,42 @@ template = {
       margin = {t = 0, b = 0, l = 0, r = 0},
    },   
    buttons = {
-      --	color = {255,230,153}, 
-      color = {230, 191, 81},
-      shape = 'round',
-      -- margin = {t = 0, b = 0, l = 0, r = 0}
+      color = {120,101, 73}, 
+      --      color = {45, 74, 71},
+      --      shape = 'round',
+      shape = 'rectangle',
+      margin = {t = 4, b = 4, l = 1, r = 1}
    }
 }
+
+buildFace = function(face)
+   face:split(2,'v', template.background)
+   face.elements[2].color = {8,137,123}
+   for i , block in ipairs(face.elements) do 
+      block:split(#pads,'v', template.panels)
+      for j, el in ipairs(block.elements) do
+--	 el:split(2,'h', template.panels)
+	 if i == 1 then
+	    el:split(12,'h',template.frets)
+	 else
+	    el:split(5,'h', template.buttons)
+	 end
+      end
+   end
+   face.pads = face.elements[1]
+   face.buttons = face.elements[2]
+end
 
 face = {}
 
 face = {
    mode    = 'fill',
    shape   = 'rectangle',
-   color   = {40,40,40},
+   --   color   = {40,40,40},
+   color   = {40, 43, 45},
    padding = {t = 0, b = 0, l = 0, r = 0},
-   margin  = {t = 15, b = 10, l = 0, r = 0},
+   --   margin  = {t = 15, b = 10, l = 0, r = 0},
+   margin  = {t = 5, b = 0, l = 0, r = 0},
    radius  = 80,
    segments = 10
 }
@@ -116,12 +137,3 @@ face.split = function(self, parts, align, template, initPart)
    end
 end
 
-buildFace = function(face)
-   face:split(#pads,'v', template.background)
-   for i, el in ipairs(face.elements) do
-      el:split(2,'h', template.panels)
-      el.elements[1]:split(12,'h',template.frets)
-      el.elements[2].color = {255,255,255}
-      el.elements[2]:split(5,'h', template.buttons)
-   end
-end

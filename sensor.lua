@@ -144,6 +144,45 @@ end
 function sensor.check(x,y,pressure)
    local state = null
    local t = face.elements
+   local posX = null
+   for j, block in ipairs(t) do
+      if y > block.y
+	 and y < block.y + block.h
+      then
+	 for i, el in ipairs(block.elements) do
+	    -- print(x, el.x, el.x + el.w, ' : ', y, el.y, el.y + el.h)
+	    if y > el.y
+	       and y < el.y + el.h
+	       and x >  el.x
+	       and x < el.x + el.w
+	    then
+	       posX =  (x - el.x)/el.w 
+	       state = {
+	       row = i,
+	       x = x,
+	       y = y,
+	       x0 = el.x,
+	       y0 = el.y,
+	       w = el.w,
+	       h = el.h,
+	       pressure = pressure,
+	       bType = j == 1  -- 1 or 2
+		  and 'pad'
+		  or 'btn',
+	       pos = j == 1
+		  and (posX + 1)
+		  or math.floor(posX*5  + 1)}
+	    end
+	 end
+      end
+   end
+   return state
+end
+
+--[[
+function sensor.check(x,y,pressure)
+   local state = null
+   local t = face.elements
    local   posX = null
    for i, el in ipairs(t) do
       if el.y < y and y < el.y + el.h then
@@ -176,3 +215,4 @@ function sensor.check(x,y,pressure)
    -- return i, j, posX
    return state
 end
+--]]
