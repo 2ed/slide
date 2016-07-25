@@ -66,7 +66,7 @@ Aaand, opposite when released.
 
 --]]
 
-sensor.register = function(touchTable,id,x,y,pressure, moved)
+sensor.register = function(touchTable,id,x,y,pressure)
    local newTouch = sensor.check(x,y,pressure)
    if not touchTable[id] then
       -- When touch pressed
@@ -105,7 +105,7 @@ sensor.register = function(touchTable,id,x,y,pressure, moved)
       local pad = touchTable[id]
       local xm = math.max(pad.x0,x)
       local xM = math.min(pad.x0 + pad.w,xm)
-      local pos = 2 - (xM - pad.x0)/pad.w 
+      local pos = (xM - pad.x0)/pad.w*(-1)^reversed + reversed
       updatePad(pad.row,id,pos)
    end
       
@@ -128,7 +128,7 @@ sensor.remove = function(touchTable,id)
       stopNoise(touchTable[id])
    elseif pads[touchTable[id].row].pad.id == id then
       -- Resetting only last pad finger
-      updatePad(touchTable[id].row,'noid', 1)
+      updatePad(touchTable[id].row,'noid', 0)
    end
    touchTable[id] = null
 end
@@ -163,7 +163,7 @@ function sensor.check(x,y,pressure)
 		  or (y - el.y)/el.h
 	       state = {
 		  row = j == 1
-		     and 4 - i
+		     and i*(-1)^reversed + 4*reversed
 		     or 4 - i,
 		  x = x,
 		  y = y,
@@ -175,8 +175,10 @@ function sensor.check(x,y,pressure)
 		  bType = j == 1  -- 1 or 2
 		     and 'pad'
 		     or 'btn',
+		  -- Don't forget about update part
+		  -- in register function!
 		  pos = j == 1
-		     and 2 - posX
+		     and posX*(-1)^reversed + reversed
 		     or math.floor(posX*5  + 1)
 	       }
 	    end

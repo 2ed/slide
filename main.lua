@@ -6,10 +6,13 @@ require('sensor')
 -- verbose = true
 
 -- Decomment below for shitsound: 
--- microchromatics = true
+microchromatics = true
+
+-- Set 1 for reversed pads, 0 for normal top-to-bottom^
+reversed = 0
 
 -- Set the form: 'square', 'saw' or 'sin'
-waveForm = 'saw'
+waveForm = 'square'
 
 
 operationSystem = love.system.getOS()
@@ -105,7 +108,7 @@ function love.touchpressed( id, x, y, dx, dy, pressure )
 
 function love.touchmoved( id, x, y, dx, dy, pressure )
 --   sensor.process(sensor.touches[id],x,y,dx,dy,pressure)
-    sensor.register(sensor.touches,id,x,y,pressure, true)
+    sensor.register(sensor.touches,id,x,y,pressure)
 end
 
 function love.touchreleased( id, x, y, dx, dy, pressure )
@@ -115,8 +118,26 @@ function love.touchreleased( id, x, y, dx, dy, pressure )
 end
 
 function love.keypressed(key,scancode)
+   local keytable = {
+      {'q','w','e'},
+      {'a','s','d'},
+      {'z','x','c'},
+   }
+   for i, row in ipairs(keytable) do
+      for j, k in ipairs(row) do
+	 if k == key then
+	    local block = face.elements[2].elements[2]
+	    local x = block.x + j*block.w/4
+	    local y = block.y + block.h/5 + i*block.h/6	    
+	    sensor.register(sensor.touches,key, x, y, 0.5)
+	 end
+      end
+   end
 end
 function love.keyreleased(key,scancode)
+   if sensor.touches[key] then
+      sensor.remove(sensor.touches,key)
+   end
 end
 
 -- testo = ''
@@ -144,7 +165,7 @@ function love.draw()
 	if verbose then	sensor.draw(sensor.touches) end
 --	printTable(face.elements, 4)
 --	printTable(pads,'r')
---	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
+	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
 	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))
 --	p(testo)
 end
