@@ -13,10 +13,10 @@ template = {
    },
    frets = {
       -- color = {220,101, 13},
-      color = {120,80,80}, 
+      color = {19, 80,143},--{5, 92,182},-- {120,80,80}, 
       shape = 'rectangle',
       mode = 'line',
-      margin = {t = 0, b = 0, l = 0, r = 0},
+      margin = {t = 0, b = 0, l = 1, r = 1},
    },   
    buttons = {
       color = {35,106, 98}, --{120,101, 73}, 
