@@ -67,7 +67,26 @@ Aaand, opposite when released.
 --]]
 
 sensor.register = function(touchTable,id,x,y,pressure)
+   -- For touch test
+   if not touchTable[id] then
+      touchTable[id] = {
+	 x0 = x,
+	 y0 = y,
+	 x = x,
+	 y = y,
+	 pressure = pressure,
+      }
+      return
+   else
+      touchTable[id].x = x
+      touchTable[id].y = y
+      touchTable[id].pressure = pressure
+      return
+   end
+   -- For touch test
+
    local newTouch = sensor.check(x,y,pressure)
+   
    if not touchTable[id] then
       -- When touch pressed
       if not newTouch then
@@ -124,6 +143,12 @@ sensor.add = function(touchTable,id)
 end
 
 sensor.remove = function(touchTable,id)
+   -- TOUCH TEST
+   if touchTable[id] then
+      touchTable[id] = null
+      return
+   end
+   -- TOUCH TEST
    if touchTable[id].bType == 'btn' then
       stopNoise(touchTable[id])
    elseif pads[touchTable[id].row].pad.id == id then

@@ -3,7 +3,7 @@ require('sound')
 require('sensor')
 
 -- Decomment below for shitstorm:
--- verbose = true
+verbose = true
 
 -- Decomment below for shitsound: 
 microchromatics = true
@@ -161,7 +161,7 @@ end
 
 function love.draw()
 	p('kek', 'reset')
-	face:draw()
+--	face:draw()
 	if verbose then	sensor.draw(sensor.touches) end
 --	printTable(face.elements, 4)
 --	printTable(pads,'r')
