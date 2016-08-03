@@ -3,7 +3,7 @@ require('sound')
 require('sensor')
 
 -- Decomment below for shitstorm:
-verbose = true
+-- verbose = true
 
 -- Decomment below for shitsound: 
 microchromatics = true
@@ -14,6 +14,10 @@ reversed = 0
 -- Set the form: 'square', 'saw' or 'sin'
 waveForm = 'square'
 
+sensor.speed = {
+   attack = 0.1,
+   fade = 0.2
+}
 
 operationSystem = love.system.getOS()
 fontSize = operationSystem == "Android" and 24 or 10
@@ -156,16 +160,16 @@ function love.load()
 end
 
 function love.update(dt)
-   
+   sensor:update(dt)
 end
 
 function love.draw()
 	p('kek', 'reset')
---	face:draw()
+	face:draw()
 	if verbose then	sensor.draw(sensor.touches) end
 --	printTable(face.elements, 4)
 --	printTable(pads,'r')
-	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
+--	printTable(sensor.touches, 'r')	-- local f,c = 220, 300
 	-- p('frequency ' .. f .. ' + ' .. c .. ' cents: ' .. setFreq(f,c))
 --	p(testo)
 end

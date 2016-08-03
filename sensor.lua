@@ -7,9 +7,11 @@ tones ={
    A3 = 220,
    D4 = 293.66,
    G3 = 196,
-   C3 = 130,81,
+   C3 = 130.81
 }
--- Dropped Down
+
+-- C3 - G3 - D4
+
 pads = { 
    -- E
 --   {btn = {}, pad = {}, freq = 1318.51},
@@ -66,8 +68,19 @@ Aaand, opposite when released.
 
 --]]
 
+sensor.update = function(self,dt)
+   for cycle, mas in ipairs({self.attack, self.fade}) do
+      local sign, speed =
+	 (-1)^(cycle - 1),
+      self.speed[cycle == 1 and 'attack' or 'fade']
+      for i, el in ipairs(mas) do
+	 
+      end
+   end
+end
+
 sensor.register = function(touchTable,id,x,y,pressure)
-   -- For touch test
+   --[[ For touch test
    if not touchTable[id] then
       touchTable[id] = {
 	 x0 = x,
@@ -84,7 +97,7 @@ sensor.register = function(touchTable,id,x,y,pressure)
       return
    end
    -- For touch test
-
+   --]]
    local newTouch = sensor.check(x,y,pressure)
    
    if not touchTable[id] then
@@ -143,12 +156,13 @@ sensor.add = function(touchTable,id)
 end
 
 sensor.remove = function(touchTable,id)
-   -- TOUCH TEST
+   --[[ TOUCH TEST
    if touchTable[id] then
       touchTable[id] = null
       return
    end
    -- TOUCH TEST
+   --]]
    if touchTable[id].bType == 'btn' then
       stopNoise(touchTable[id])
    elseif pads[touchTable[id].row].pad.id == id then

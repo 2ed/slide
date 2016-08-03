@@ -30,7 +30,7 @@ template = {
 buildFace = function(face)
    face:split(2,'v', template.background)
    face.elements[2]:split(2,'h', template.background)
-   face.layout = {face.elements[1],face.elements[2].elements[2]}
+   face.layout = {face.elements[1],face.elements[2].elements[1]}
    for i , block in ipairs(face.layout) do
       if i == 2 then 
 --	 block.margin = {t = 10, b = 5, l = 2, r = 5}
